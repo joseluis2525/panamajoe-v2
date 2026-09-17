@@ -10,38 +10,41 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         html, body {
-            font-family: Arial, sans-serif; background: #050505; color: #fff;
+            font-family: Arial, sans-serif; background: #000; color: #fff;
             overflow: hidden; width: 100%; height: 100%;
             touch-action: none; user-select: none; -webkit-user-select: none;
         }
 
-        /* ============================================================
-           LAYOUT VERTICAL (portrait)
-           ============================================================ */
         #app {
             display: flex; flex-direction: column;
             width: 100vw; height: 100vh;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
+        /* ============================================================
+           CABECERA
+           ============================================================ */
         #game-header {
             text-align: center; padding: 4px 8px;
             background: #111; border-bottom: 2px solid #f0c040;
-            display: flex; align-items: center; justify-content: space-between; gap: 5px;
+            display: flex; align-items: center; gap: 5px;
             flex-shrink: 0;
+            z-index: 100;
         }
-        #game-header h1 { font-size: 0.95em; color: #f0c040; margin: 0; }
-        #status { font-size: 0.65em; color: #aaa; flex: 1; text-align: center; }
+        #game-header h1 { font-size: 0.9em; color: #f0c040; margin: 0; white-space: nowrap; }
+        #status { font-size: 0.6em; color: #aaa; flex: 1; text-align: center; }
         .hdr-btn {
             background: #333; border: 1px solid #f0c040; border-radius: 5px;
             color: #f0c040; padding: 5px 10px; font-size: 0.7em; cursor: pointer;
-            user-select: none; flex-shrink: 0;
+            user-select: none; flex-shrink: 0; white-space: nowrap;
         }
         .hdr-btn:active { background: #f0c040; color: #000; }
 
+        /* ============================================================
+           CONTENEDOR DEL EMULADOR
+           ============================================================ */
         #emulator-container {
             flex: 1 1 auto; display: flex; align-items: center; justify-content: center;
-            background: #000; overflow: hidden; min-height: 0;
+            background: #000; overflow: hidden; min-height: 0; position: relative;
         }
         #jsspeccy {
             width: 100%; height: 100%;
@@ -54,29 +57,39 @@
             outline: none;
         }
 
+        /* ============================================================
+           GAMEPAD (portrait)
+           ============================================================ */
         #gamepad-area {
             flex-shrink: 0;
-            background: #1a1a2e; padding: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom));
+            background: #1a1a2e;
+            padding: 6px;
+            padding-bottom: calc(6px + env(safe-area-inset-bottom));
             border-top: 1px solid #333;
         }
 
         .menu-keys {
-            display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px;
-            margin-bottom: 8px;
+            display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px;
+            margin-bottom: 6px;
         }
-        .menu-keys .btn { height: 38px; font-size: 0.95em; background: #2a2a3e; border: 1px solid #555; }
+        .menu-keys .btn { height: 36px; font-size: 0.9em; background: #2a2a3e; border: 1px solid #555; }
 
-        .game-controls { display: flex; justify-content: space-around; align-items: center; }
+        .game-controls-row {
+            display: flex; justify-content: space-around; align-items: center;
+        }
 
-        .d-pad { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 6px; width: 180px; }
-        .d-pad .btn { aspect-ratio: 1; }
+        .d-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 56px);
+            grid-template-rows: repeat(2, 56px);
+            gap: 2px;
+        }
 
         .btn {
             background: #333; border: 2px solid #555; border-radius: 10px; color: #fff;
             display: flex; justify-content: center; align-items: center; font-size: 1.1em;
             user-select: none; -webkit-user-select: none; font-weight: bold;
             cursor: pointer; touch-action: manipulation;
-            transition: background 0.05s;
         }
         .btn:active, .btn.active { background: #f0c040 !important; color: #000 !important; }
 
@@ -85,43 +98,74 @@
         #btn-down  { grid-column: 2; grid-row: 2; }
         #btn-right { grid-column: 3; grid-row: 2; }
 
-        #btn-up    { background-image: url('up.png');  background-size: 60%; background-repeat: no-repeat; background-position: center; color: transparent; }
-        #btn-down  { background-image: url('dwn.png'); background-size: 60%; background-repeat: no-repeat; background-position: center; color: transparent; }
-        #btn-left  { background-image: url('lft.png'); background-size: 60%; background-repeat: no-repeat; background-position: center; color: transparent; }
-        #btn-right { background-image: url('rgt.png'); background-size: 60%; background-repeat: no-repeat; background-position: center; color: transparent; }
+        #btn-up    { background-image: url('up.png');  background-size: 55%; background-repeat: no-repeat; background-position: center; color: transparent; }
+        #btn-down  { background-image: url('dwn.png'); background-size: 55%; background-repeat: no-repeat; background-position: center; color: transparent; }
+        #btn-left  { background-image: url('lft.png'); background-size: 55%; background-repeat: no-repeat; background-position: center; color: transparent; }
+        #btn-right { background-image: url('rgt.png'); background-size: 55%; background-repeat: no-repeat; background-position: center; color: transparent; }
 
         .btn-action {
             width: 90px; height: 90px; border-radius: 50%;
             background: #a93226; border: 3px solid #e6b0aa;
             font-size: 1em; color: #fff;
         }
-        .btn-action:active, .btn-action.active { background: #f0c040 !important; color: #000 !important; }
 
         /* ============================================================
-           LAYOUT HORIZONTAL (landscape) — pantalla completa
+           ORIENTACIÓN HORIZONTAL — pantalla completa real
            ============================================================ */
         @media (orientation: landscape) {
-            #app {
-                flex-direction: row;
-                padding: 0;
-            }
+
+            /* Header flotante translúcido */
             #game-header {
-                position: absolute; top: 0; left: 0; right: 0;
-                z-index: 100;
-                background: rgba(0,0,0,0.5);
+                position: fixed; top: 0; left: 0; right: 0;
+                background: rgba(0,0,0,0.55);
                 border-bottom: none;
                 padding: 3px 8px;
                 transition: opacity 0.3s;
-                padding-top: env(safe-area-inset-top);
+                z-index: 300;
             }
             #game-header.hidden { opacity: 0; pointer-events: none; }
-            #game-header h1 { font-size: 0.75em; }
-            #status { font-size: 0.6em; }
+            #game-header h1 { font-size: 0.7em; }
+            #status { font-size: 0.55em; }
 
-            /* Zona D-pad izquierda */
+            /* Contenedor del emulador ocupa TODA la pantalla */
+            #emulator-container {
+                position: fixed;
+                inset: 0;
+                width: 100vw;
+                height: 100vh;
+                z-index: 1;
+                padding: 0;
+            }
+            #jsspeccy {
+                width: 100vw !important;
+                height: 100vh !important;
+                display: block !important;
+            }
+
+            /* Canvas: forzar tamaño completo con object-fit contain */
+            #jsspeccy canvas {
+                width: 100vw !important;
+                height: 100vh !important;
+                max-width: none !important;
+                max-height: none !important;
+                object-fit: contain;
+                display: block;
+            }
+
+            /* OCULTAR la UI interna de JSSpeccy (menú + toolbar) */
+            #jsspeccy > div > div:first-child,
+            #jsspeccy > div > div:last-child,
+            #jsspeccy .jsspeccy-menu,
+            #jsspeccy .jsspeccy-toolbar,
+            #jsspeccy > div > div:not(:has(canvas)) {
+                display: none !important;
+            }
+
+            /* Zona del D-pad (izquierda) */
             #gamepad-area {
-                position: absolute; left: 0; top: 0; bottom: 0;
-                width: 32vw;
+                position: fixed;
+                left: 0; top: 0; bottom: 0;
+                width: 30vw;
                 background: transparent;
                 border: none;
                 padding: 0;
@@ -133,98 +177,75 @@
             }
             #gamepad-area > * { pointer-events: auto; }
 
-            .menu-keys {
-                position: absolute; top: 40px; left: 50%;
-                transform: translateX(-50%);
-                display: flex; gap: 5px;
-                background: rgba(0,0,0,0.75);
-                padding: 6px; border-radius: 8px;
-                margin: 0;
-                opacity: 0; pointer-events: none;
-                transition: opacity 0.25s;
-                z-index: 200;
-            }
-            .menu-keys.visible { opacity: 1; pointer-events: auto; }
-            .menu-keys .btn { width: 44px; height: 44px; font-size: 1em; }
-
-            /* D-pad circular grande */
+            /* D-pad más grande y circular */
             .d-pad {
-                width: min(30vw, 220px);
-                height: min(30vw, 220px);
+                width: min(28vw, 200px);
+                height: min(28vw, 200px);
                 grid-template-columns: repeat(3, 1fr);
                 grid-template-rows: repeat(3, 1fr);
-                gap: 4px;
+                gap: 3px;
                 opacity: 0.85;
             }
             .d-pad .btn { border-radius: 50%; }
 
-            /* Reposicionar botones del D-pad en cruz */
-            #btn-up    { grid-column: 2; grid-row: 1; }
-            #btn-left  { grid-column: 1; grid-row: 2; }
-            #btn-down  { grid-column: 2; grid-row: 3; }
-            #btn-right { grid-column: 3; grid-row: 2; }
+            /* Botones menú ocultos por defecto, se muestran con MENÚ */
+            .menu-keys {
+                position: fixed; top: 35px; left: 50%;
+                transform: translateX(-50%);
+                display: flex; gap: 5px;
+                background: rgba(0,0,0,0.8);
+                padding: 6px; border-radius: 8px;
+                margin: 0;
+                opacity: 0; pointer-events: none;
+                transition: opacity 0.25s;
+                z-index: 250;
+            }
+            .menu-keys.visible { opacity: 1; pointer-events: auto; }
+            .menu-keys .btn { width: 44px; height: 44px; font-size: 1em; }
+
+            /* Ocultar la fila del menú de la fila del gamepad original */
+            #gamepad-area .menu-keys {
+                position: fixed;
+            }
 
             /* Botón SALTO a la derecha */
-            .game-controls {
-                position: absolute; right: 0; top: 0; bottom: 0;
-                width: 32vw;
+            .game-controls-row {
+                position: fixed;
+                right: 0; top: 0; bottom: 0;
+                width: 30vw;
                 display: flex; align-items: center; justify-content: center;
                 padding-right: env(safe-area-inset-right);
                 pointer-events: auto;
                 z-index: 50;
             }
             .btn-action {
-                width: min(22vw, 150px);
-                height: min(22vw, 150px);
-                font-size: 1.2em;
+                width: min(22vw, 140px);
+                height: min(22vw, 140px);
+                font-size: 1.1em;
                 opacity: 0.85;
             }
-
-            /* Emulador ocupa toda la pantalla */
-            #emulator-container {
-                position: absolute; inset: 0;
-                z-index: 1;
-            }
-            #jsspeccy {
-                width: 100%; height: 100%;
-            }
-            #jsspeccy canvas {
-                width: 100% !important;
-                height: 100% !important;
-                object-fit: contain;
-            }
-
-            /* Botón fullscreen flotante */
-            #btn-fullscreen {
-                position: absolute; top: 10px; right: 10px;
-                z-index: 300;
-                width: 40px; height: 40px;
-                border-radius: 8px;
-                background: rgba(0,0,0,0.6);
-                border: 1px solid #f0c040;
-                color: #f0c040;
-                font-size: 1.2em;
-                display: flex; align-items: center; justify-content: center;
-                cursor: pointer;
-                padding-top: env(safe-area-inset-top);
-            }
-            #btn-fullscreen:active { background: #f0c040; color: #000; }
         }
 
-        /* Botón fullscreen también en portrait */
+        /* ============================================================
+           BOTÓN FULLSCREEN FLOTANTE
+           ============================================================ */
         #btn-fullscreen {
             position: fixed; top: 10px; right: 10px;
-            z-index: 300;
-            width: 36px; height: 36px;
+            z-index: 400;
+            width: 38px; height: 38px;
             border-radius: 8px;
             background: rgba(0,0,0,0.6);
             border: 1px solid #f0c040;
             color: #f0c040;
-            font-size: 1.1em;
+            font-size: 1.2em;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
         }
         #btn-fullscreen:active { background: #f0c040; color: #000; }
+
+        /* Cuando entramos en fullscreen, ocultamos el header */
+        body:fullscreen #game-header { display: none; }
+        body:-webkit-full-screen #game-header { display: none; }
     </style>
 </head>
 <body>
@@ -253,16 +274,15 @@
                 <div class="btn" data-key="Enter">ENT</div>
             </div>
 
-            <div class="d-pad">
-                <div id="btn-up"    class="btn" data-key="6">↑</div>
-                <div id="btn-left"  class="btn" data-key="7">←</div>
-                <div id="btn-down"  class="btn" data-key="8">↓</div>
-                <div id="btn-right" class="btn" data-key="9">→</div>
+            <div class="game-controls-row">
+                <div class="d-pad">
+                    <div id="btn-up"    class="btn" data-key="6">↑</div>
+                    <div id="btn-left"  class="btn" data-key="7">←</div>
+                    <div id="btn-down"  class="btn" data-key="8">↓</div>
+                    <div id="btn-right" class="btn" data-key="9">→</div>
+                </div>
+                <div id="btn-jump" class="btn btn-action" data-key="Space">SALTO</div>
             </div>
-        </div>
-
-        <div class="game-controls">
-            <div id="btn-jump" class="btn btn-action" data-key="Space">SALTO</div>
         </div>
 
         <div id="btn-fullscreen" title="Pantalla completa">⛶</div>
@@ -287,7 +307,7 @@
                 console.log('[STATUS]', msg);
             }
 
-            // === Inicializar emulador ===
+            // === Inicializar JSSpeccy ===
             const speccy = JSSpeccy(document.getElementById('jsspeccy'), {
                 autoStart: true,
                 autoLoadTapes: true,
@@ -296,11 +316,127 @@
                 zoom: 1
             });
 
+            // Exponer para debug
+            window.__speccy = speccy;
+
             function getCanvas() {
                 return document.querySelector('#jsspeccy canvas');
             }
 
-            // === Carga de cinta por drag & drop simulado ===
+            // ============================================================
+            // OCULTAR LA UI INTERNA DE JSSPECCYY (menú + toolbar)
+            // ============================================================
+            function hideEmulatorUI() {
+                const container = document.getElementById('jsspeccy');
+                const canvas = container.querySelector('canvas');
+                if (!canvas) return;
+
+                // Ocultar todos los elementos dentro de #jsspeccy que NO sean canvas
+                // ni contenedores del canvas
+                container.querySelectorAll('*').forEach(el => {
+                    if (el === canvas) return;
+                    if (el.contains(canvas)) return; // no ocultar ancestros del canvas
+                    // Si es un input de archivo o el canvas, dejar
+                    if (el.tagName === 'CANVAS') return;
+                    el.style.display = 'none';
+                });
+
+                // Ocultar hermanos directos del canvas
+                if (canvas.parentNode) {
+                    Array.from(canvas.parentNode.children).forEach(el => {
+                        if (el !== canvas) el.style.display = 'none';
+                    });
+                }
+            }
+
+            // ============================================================
+            // FULLSCREEN COMBINADO (navegador + emulador)
+            // ============================================================
+            async function goFullscreen() {
+                // 1. Fullscreen del navegador (oculta barra de Android)
+                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                    try {
+                        const el = document.documentElement;
+                        const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+                        if (req) await req.call(el);
+                    } catch(e) { console.warn('FS navegador:', e); }
+                }
+
+                // 2. Fullscreen del emulador JSSpeccy (hace el canvas grande)
+                if (speccy && typeof speccy.enterFullscreen === 'function') {
+                    try {
+                        speccy.enterFullscreen();
+                        console.log('[FS] speccy.enterFullscreen() OK');
+                    } catch(e) { console.warn('FS emulador:', e); }
+                }
+
+                // 3. Ocultar UI interna del emulador
+                setTimeout(hideEmulatorUI, 150);
+                setTimeout(hideEmulatorUI, 500);
+
+                // 4. Bloquear orientación en landscape si es posible
+                if (screen.orientation && screen.orientation.lock) {
+                    try {
+                        await screen.orientation.lock('landscape');
+                    } catch(e) { /* muchos navegadores no lo permiten */ }
+                }
+            }
+
+            async function exitFullscreen() {
+                if (document.fullscreenElement) {
+                    try { await document.exitFullscreen(); } catch(e) {}
+                }
+                if (speccy && typeof speccy.exitFullscreen === 'function') {
+                    try { speccy.exitFullscreen(); } catch(e) {}
+                }
+            }
+
+            btnFullscreen.addEventListener('click', async () => {
+                if (!document.fullscreenElement) {
+                    await goFullscreen();
+                } else {
+                    await exitFullscreen();
+                }
+            });
+
+            // Actualizar icono
+            document.addEventListener('fullscreenchange', () => {
+                const inFS = !!document.fullscreenElement;
+                btnFullscreen.textContent = inFS ? '⛶' : '⛶';
+                // Ocultar/mostrar header
+                if (inFS) {
+                    setTimeout(hideEmulatorUI, 200);
+                }
+            });
+
+            // ============================================================
+            // DETECTAR CAMBIOS DE ORIENTACIÓN
+            // ============================================================
+            function onOrientationChange() {
+                const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+                console.log('[ORIENT]', isLandscape ? 'landscape' : 'portrait');
+
+                if (isLandscape) {
+                    // En landscape, forzar canvas grande y ocultar UI
+                    setTimeout(() => {
+                        if (speccy && typeof speccy.enterFullscreen === 'function' && !document.fullscreenElement) {
+                            try { speccy.enterFullscreen(); } catch(e) {}
+                        }
+                        hideEmulatorUI();
+                    }, 300);
+                    // Ocultar header tras 4 seg
+                    setTimeout(() => gameHeader.classList.add('hidden'), 4000);
+                } else {
+                    gameHeader.classList.remove('hidden');
+                }
+            }
+
+            window.addEventListener('orientationchange', () => setTimeout(onOrientationChange, 500));
+            window.addEventListener('resize', () => setTimeout(onOrientationChange, 500));
+
+            // ============================================================
+            // CARGA DE LA ROM (drag & drop simulado)
+            // ============================================================
             function forceLoadFile(file) {
                 if (typeof speccy.openTAPFile === 'function') {
                     try { speccy.openTAPFile(file); return; } catch(e){}
@@ -315,7 +451,6 @@
                 if (canvas) canvas.dispatchEvent(dropEvent);
             }
 
-            // === Auto-carga de la ROM ===
             function autoLoadROM() {
                 setStatus('Cargando Panama Joe...');
                 fetch('panamajoe.tap?t=' + Date.now())
@@ -331,11 +466,11 @@
                     })
                     .catch(err => {
                         console.error(err);
-                        setStatus('❌ Error. Usa "ROM" para cargar manual.');
+                        setStatus('❌ Error. Usa ROM manual.');
                     });
             }
 
-            // Esperar a que el canvas exista antes de cargar
+            // Esperar a que el canvas exista
             let tries = 0;
             const waitCanvas = setInterval(() => {
                 tries++;
@@ -349,7 +484,6 @@
                 }
             }, 200);
 
-            // === Carga manual ===
             manualLoadInput.addEventListener('change', function(event) {
                 const file = event.target.files[0];
                 if (!file) return;
@@ -358,7 +492,9 @@
                 tapeLoaded = true;
             });
 
-            // === Botones del gamepad ===
+            // ============================================================
+            // TECLADO
+            // ============================================================
             const keyMap = {
                 '1':'1', '2':'2', '3':'3', '4':'4', '5':'5',
                 '6':'6', '7':'7', '8':'8', '9':'9',
@@ -405,7 +541,6 @@
                     btn.classList.remove('active');
                     sendKey(key, false);
                 }, { passive: false });
-
                 btn.addEventListener('mousedown', (e) => {
                     e.preventDefault();
                     btn.classList.add('active');
@@ -421,49 +556,24 @@
                 });
             });
 
-            // === Botón fullscreen ===
-            btnFullscreen.addEventListener('click', () => {
-                const el = document.documentElement;
-                if (!document.fullscreenElement) {
-                    (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen).call(el)
-                        .then(() => {
-                            // Intentar bloquear orientación en landscape (opcional, puede fallar)
-                            if (screen.orientation && screen.orientation.lock) {
-                                screen.orientation.lock('landscape').catch(() => {});
-                            }
-                        })
-                        .catch(err => console.warn('Fullscreen falló:', err));
-                } else {
-                    (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen).call(document);
-                }
-            });
-
-            // Actualizar icono al cambiar de estado
-            document.addEventListener('fullscreenchange', () => {
-                btnFullscreen.textContent = document.fullscreenElement ? '⛶' : '⛶';
-            });
-
-            // === Botón MENÚ (solo útil en landscape) ===
+            // ============================================================
+            // BOTÓN MENÚ
+            // ============================================================
             btnMenuToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
                 menuKeys.classList.toggle('visible');
             });
 
-            // Ocultar menú al pulsar cualquier tecla del menú
             menuKeys.querySelectorAll('.btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     setTimeout(() => menuKeys.classList.remove('visible'), 300);
                 });
             });
 
-            // === Ocultar header en landscape automáticamente tras 5 segundos ===
-            setTimeout(() => {
-                if (window.matchMedia('(orientation: landscape)').matches) {
-                    gameHeader.classList.add('hidden');
-                }
-            }, 5000);
-
             window.addEventListener('contextmenu', e => e.preventDefault());
+
+            // Ejecutar al inicio por si ya está en landscape
+            setTimeout(onOrientationChange, 1000);
         });
     </script>
 </body>
