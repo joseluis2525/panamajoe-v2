@@ -141,8 +141,6 @@
                 height: 100vh !important;
                 display: block !important;
             }
-
-            /* Canvas: forzar tamaño completo con object-fit contain */
             #jsspeccy canvas {
                 width: 100vw !important;
                 height: 100vh !important;
@@ -152,7 +150,7 @@
                 display: block;
             }
 
-            /* OCULTAR la UI interna de JSSpeccy (menú + toolbar) */
+            /* OCULTAR la UI interna de JSSpeccy */
             #jsspeccy > div > div:first-child,
             #jsspeccy > div > div:last-child,
             #jsspeccy .jsspeccy-menu,
@@ -161,34 +159,21 @@
                 display: none !important;
             }
 
-            /* Zona del D-pad (izquierda) */
+            /* Contenedor de gamepad sin fondo, cubre toda la pantalla pero no captura toques */
             #gamepad-area {
                 position: fixed;
-                left: 0; top: 0; bottom: 0;
-                width: 30vw;
+                inset: 0;
+                width: 100vw;
+                height: 100vh;
                 background: transparent;
                 border: none;
                 padding: 0;
-                display: flex; flex-direction: column;
-                align-items: center; justify-content: center;
-                padding-left: env(safe-area-inset-left);
                 z-index: 50;
                 pointer-events: none;
             }
             #gamepad-area > * { pointer-events: auto; }
 
-            /* D-pad más grande y circular */
-            .d-pad {
-                width: min(28vw, 200px);
-                height: min(28vw, 200px);
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(3, 1fr);
-                gap: 3px;
-                opacity: 0.85;
-            }
-            .d-pad .btn { border-radius: 50%; }
-
-            /* Botones menú ocultos por defecto, se muestran con MENÚ */
+            /* Botones menú ocultos por defecto */
             .menu-keys {
                 position: fixed; top: 35px; left: 50%;
                 transform: translateX(-50%);
@@ -203,26 +188,45 @@
             .menu-keys.visible { opacity: 1; pointer-events: auto; }
             .menu-keys .btn { width: 44px; height: 44px; font-size: 1em; }
 
-            /* Ocultar la fila del menú de la fila del gamepad original */
-            #gamepad-area .menu-keys {
-                position: fixed;
+            /* El contenedor de la fila desaparece del layout (sus hijos se posicionan libres) */
+            .game-controls-row {
+                display: contents;
             }
 
-            /* Botón SALTO a la derecha */
-            .game-controls-row {
-                position: fixed;
-                right: 0; top: 0; bottom: 0;
-                width: 30vw;
-                display: flex; align-items: center; justify-content: center;
-                padding-right: env(safe-area-inset-right);
+            /* ============================================
+               D-PAD FIJO A LA IZQUIERDA
+               ============================================ */
+            .d-pad {
+                position: fixed !important;
+                left: calc(env(safe-area-inset-left) + 15px);
+                top: 50%;
+                transform: translateY(-50%);
+                width: min(28vw, 220px);
+                height: min(28vw, 220px);
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(3, 1fr);
+                gap: 3px;
+                opacity: 0.85;
+                z-index: 60;
                 pointer-events: auto;
-                z-index: 50;
             }
-            .btn-action {
-                width: min(22vw, 140px);
-                height: min(22vw, 140px);
+            .d-pad .btn { border-radius: 50%; }
+
+            /* ============================================
+               BOTÓN SALTO FIJO A LA DERECHA
+               ============================================ */
+            #btn-jump.btn-action {
+                position: fixed !important;
+                right: calc(env(safe-area-inset-right) + 20px);
+                top: 50%;
+                transform: translateY(-50%);
+                width: min(22vw, 150px);
+                height: min(22vw, 150px);
                 font-size: 1.1em;
                 opacity: 0.85;
+                z-index: 60;
+                pointer-events: auto;
             }
         }
 
@@ -242,10 +246,6 @@
             cursor: pointer;
         }
         #btn-fullscreen:active { background: #f0c040; color: #000; }
-
-        /* Cuando entramos en fullscreen, ocultamos el header */
-        body:fullscreen #game-header { display: none; }
-        body:-webkit-full-screen #game-header { display: none; }
     </style>
 </head>
 <body>
@@ -316,7 +316,6 @@
                 zoom: 1
             });
 
-            // Exponer para debug
             window.__speccy = speccy;
 
             function getCanvas() {
@@ -331,17 +330,13 @@
                 const canvas = container.querySelector('canvas');
                 if (!canvas) return;
 
-                // Ocultar todos los elementos dentro de #jsspeccy que NO sean canvas
-                // ni contenedores del canvas
                 container.querySelectorAll('*').forEach(el => {
                     if (el === canvas) return;
-                    if (el.contains(canvas)) return; // no ocultar ancestros del canvas
-                    // Si es un input de archivo o el canvas, dejar
+                    if (el.contains(canvas)) return;
                     if (el.tagName === 'CANVAS') return;
                     el.style.display = 'none';
                 });
 
-                // Ocultar hermanos directos del canvas
                 if (canvas.parentNode) {
                     Array.from(canvas.parentNode.children).forEach(el => {
                         if (el !== canvas) el.style.display = 'none';
@@ -353,7 +348,6 @@
             // FULLSCREEN COMBINADO (navegador + emulador)
             // ============================================================
             async function goFullscreen() {
-                // 1. Fullscreen del navegador (oculta barra de Android)
                 if (!document.fullscreenElement && !document.webkitFullscreenElement) {
                     try {
                         const el = document.documentElement;
@@ -362,7 +356,6 @@
                     } catch(e) { console.warn('FS navegador:', e); }
                 }
 
-                // 2. Fullscreen del emulador JSSpeccy (hace el canvas grande)
                 if (speccy && typeof speccy.enterFullscreen === 'function') {
                     try {
                         speccy.enterFullscreen();
@@ -370,11 +363,9 @@
                     } catch(e) { console.warn('FS emulador:', e); }
                 }
 
-                // 3. Ocultar UI interna del emulador
                 setTimeout(hideEmulatorUI, 150);
                 setTimeout(hideEmulatorUI, 500);
 
-                // 4. Bloquear orientación en landscape si es posible
                 if (screen.orientation && screen.orientation.lock) {
                     try {
                         await screen.orientation.lock('landscape');
@@ -399,11 +390,9 @@
                 }
             });
 
-            // Actualizar icono
             document.addEventListener('fullscreenchange', () => {
                 const inFS = !!document.fullscreenElement;
                 btnFullscreen.textContent = inFS ? '⛶' : '⛶';
-                // Ocultar/mostrar header
                 if (inFS) {
                     setTimeout(hideEmulatorUI, 200);
                 }
@@ -417,14 +406,12 @@
                 console.log('[ORIENT]', isLandscape ? 'landscape' : 'portrait');
 
                 if (isLandscape) {
-                    // En landscape, forzar canvas grande y ocultar UI
                     setTimeout(() => {
                         if (speccy && typeof speccy.enterFullscreen === 'function' && !document.fullscreenElement) {
                             try { speccy.enterFullscreen(); } catch(e) {}
                         }
                         hideEmulatorUI();
                     }, 300);
-                    // Ocultar header tras 4 seg
                     setTimeout(() => gameHeader.classList.add('hidden'), 4000);
                 } else {
                     gameHeader.classList.remove('hidden');
@@ -470,7 +457,6 @@
                     });
             }
 
-            // Esperar a que el canvas exista
             let tries = 0;
             const waitCanvas = setInterval(() => {
                 tries++;
