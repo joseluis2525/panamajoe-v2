@@ -21,7 +21,7 @@
         }
 
         /* ============================================================
-           CABECERA (solo portrait)
+           CABECERA
            ============================================================ */
         #game-header {
             text-align: center; padding: 4px 8px;
@@ -77,36 +77,46 @@
 
         .d-pad {
             display: grid;
-            grid-template-columns: repeat(3, 64px);
-            grid-template-rows: repeat(3, 64px);
-            gap: 3px;
+            grid-template-columns: repeat(3, 72px);
+            grid-template-rows: repeat(3, 72px);
+            gap: 4px;
         }
 
         .btn {
-            background: #333; border: 2px solid #555; border-radius: 50%; color: #fff;
-            display: flex; justify-content: center; align-items: center; font-size: 1.1em;
-            user-select: none; -webkit-user-select: none; font-weight: bold;
-            cursor: pointer; touch-action: manipulation;
+            background: #333;
+            border: 2px solid #555;
+            border-radius: 50%;
+            background-size: 70%;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: pointer;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            /* Sin texto */
+            color: transparent;
+            font-size: 0;
         }
 
+        /* Posicionamiento del D-pad (portrait) */
         #btn-up    { grid-column: 2; grid-row: 1; }
         #btn-left  { grid-column: 1; grid-row: 2; }
         #btn-right { grid-column: 3; grid-row: 2; }
         #btn-down  { grid-column: 2; grid-row: 3; }
 
-        /* Imágenes normales */
-        #btn-up    { background-image: url('up.png');  background-size: 65%; background-repeat: no-repeat; background-position: center; }
-        #btn-down  { background-image: url('dwn.png'); background-size: 65%; background-repeat: no-repeat; background-position: center; }
-        #btn-left  { background-image: url('lft.png'); background-size: 65%; background-repeat: no-repeat; background-position: center; }
-        #btn-right { background-image: url('rgt.png'); background-size: 65%; background-repeat: no-repeat; background-position: center; }
+        /* Imágenes NORMALES */
+        #btn-up    { background-image: url('up.png'); }
+        #btn-down  { background-image: url('dwn.png'); }
+        #btn-left  { background-image: url('lft.png'); }
+        #btn-right { background-image: url('rgt.png'); }
 
         /* Imágenes de ACCIÓN (al presionar) */
-        #btn-up.active    { background-image: url('upaction.png') !important;  background-color: transparent !important; }
-        #btn-down.active  { background-image: url('dwnaction.png') !important; background-color: transparent !important; }
-        #btn-left.active  { background-image: url('lftaction.png') !important; background-color: transparent !important; }
-        #btn-right.active { background-image: url('rgtaction.png') !important; background-color: transparent !important; }
+        #btn-up.active    { background-image: url('upaction.png') !important; }
+        #btn-down.active  { background-image: url('dwnaction.png') !important; }
+        #btn-left.active  { background-image: url('lftaction.png') !important; }
+        #btn-right.active { background-image: url('rgtaction.png') !important; }
 
-        /* Grupo de acción (derecha): config + disp */
+        /* Grupo acción (derecha) */
         .action-group {
             display: flex;
             flex-direction: column;
@@ -115,13 +125,13 @@
         }
 
         #btn-config {
-            width: 44px; height: 44px;
+            width: 50px; height: 50px;
             border-radius: 50%;
             background: #f0c040;
             border: 2px solid #a08020;
             color: #000;
             font-weight: bold;
-            font-size: 0.95em;
+            font-size: 1.05em;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -131,17 +141,19 @@
         #btn-config:active { background: #a08020; transform: scale(0.95); }
 
         #btn-disp {
-            width: 100px; height: 100px;
+            width: 110px; height: 110px;
             border-radius: 50%;
             background-color: transparent;
             background-image: url('disp.png');
-            background-size: 85%;
+            background-size: 90%;
             background-repeat: no-repeat;
             background-position: center;
             border: none;
             cursor: pointer;
             user-select: none; -webkit-user-select: none;
             touch-action: manipulation;
+            color: transparent;
+            font-size: 0;
         }
         #btn-disp.active {
             background-image: url('dispction.png') !important;
@@ -176,7 +188,6 @@
                 display: block;
             }
 
-            /* Ocultar UI interna JSSpeccy */
             #jsspeccy > div > div:first-child,
             #jsspeccy > div > div:last-child,
             #jsspeccy .jsspeccy-menu,
@@ -203,25 +214,30 @@
             }
 
             /* ============================================
-               D-PAD GRANDE EN ROMBO (IZQUIERDA)
+               D-PAD GRANDE — IZQUIERDA
                ============================================ */
             .d-pad {
                 position: fixed !important;
-                left: calc(env(safe-area-inset-left) + 15px) !important;
+                left: calc(env(safe-area-inset-left) + 25px) !important;
                 right: auto !important;
                 top: 50% !important;
                 transform: translateY(-50%) !important;
-                width: min(36vw, 68vh, 300px) !important;
-                height: min(36vw, 68vh, 300px) !important;
+                width: min(50vw, 88vh, 400px) !important;
+                height: min(50vw, 88vh, 400px) !important;
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
                 grid-template-rows: repeat(3, 1fr) !important;
-                gap: 6px !important;
+                gap: 8px !important;
                 opacity: 0.9;
                 z-index: 60;
                 pointer-events: auto;
             }
-            .d-pad .btn { border-radius: 50%; border-width: 3px; }
+
+            .d-pad .btn {
+                border-radius: 50%;
+                border-width: 3px;
+                background-size: 70%;
+            }
 
             #btn-up    { grid-column: 2 !important; grid-row: 1 !important; }
             #btn-left  { grid-column: 1 !important; grid-row: 2 !important; }
@@ -229,32 +245,32 @@
             #btn-down  { grid-column: 2 !important; grid-row: 3 !important; }
 
             /* ============================================
-               GRUPO ACCIÓN (DERECHA): config + disp
+               GRUPO ACCIÓN — DERECHA
                ============================================ */
             .action-group {
                 position: fixed !important;
-                right: calc(env(safe-area-inset-right) + 25px) !important;
+                right: calc(env(safe-area-inset-right) + 30px) !important;
                 left: auto !important;
                 top: 50% !important;
                 transform: translateY(-50%) !important;
                 display: flex !important;
                 flex-direction: column !important;
                 align-items: center !important;
-                gap: 18px !important;
+                gap: 22px !important;
                 z-index: 60;
                 pointer-events: auto;
             }
 
             #btn-config {
-                width: 50px !important;
-                height: 50px !important;
-                font-size: 1.05em !important;
+                width: 60px !important;
+                height: 60px !important;
+                font-size: 1.2em !important;
                 opacity: 0.9;
             }
 
             #btn-disp {
-                width: min(30vw, 55vh, 200px) !important;
-                height: min(30vw, 55vh, 200px) !important;
+                width: min(28vw, 50vh, 190px) !important;
+                height: min(28vw, 50vh, 190px) !important;
                 opacity: 0.9;
             }
         }
@@ -279,10 +295,10 @@
             <div class="game-controls-row">
 
                 <div class="d-pad">
-                    <div id="btn-up"    class="btn" data-key="6">↑</div>
-                    <div id="btn-left"  class="btn" data-key="7">←</div>
-                    <div id="btn-right" class="btn" data-key="9">→</div>
-                    <div id="btn-down"  class="btn" data-key="8">↓</div>
+                    <div id="btn-up"    class="btn" data-key="6"></div>
+                    <div id="btn-left"  class="btn" data-key="7"></div>
+                    <div id="btn-right" class="btn" data-key="9"></div>
+                    <div id="btn-down"  class="btn" data-key="8"></div>
                 </div>
 
                 <div class="action-group">
