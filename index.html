@@ -21,7 +21,7 @@
         }
 
         /* ============================================================
-           CABECERA
+           CABECERA (portrait)
            ============================================================ */
         #game-header {
             text-align: center; padding: 4px 8px;
@@ -63,8 +63,8 @@
         #gamepad-area {
             flex-shrink: 0;
             background: #1a1a2e;
-            padding: 8px;
-            padding-bottom: calc(8px + env(safe-area-inset-bottom));
+            padding: 10px;
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
             border-top: 1px solid #333;
         }
 
@@ -72,66 +72,65 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 10px;
+            padding: 0 15px;
         }
 
         .d-pad {
             display: grid;
-            grid-template-columns: repeat(3, 72px);
-            grid-template-rows: repeat(3, 72px);
-            gap: 4px;
+            grid-template-columns: repeat(2, 64px);
+            grid-template-rows: 64px;
+            gap: 8px;
         }
 
+        /* Botón base: sin fondo, sin borde, solo imagen */
         .btn {
-            background: #333;
-            border: 2px solid #555;
-            border-radius: 50%;
-            background-size: 70%;
+            background-color: transparent;
+            border: none;
+            border-radius: 0;
+            background-size: 100%;
             background-repeat: no-repeat;
             background-position: center;
             cursor: pointer;
             touch-action: manipulation;
             user-select: none;
             -webkit-user-select: none;
-            /* Sin texto */
             color: transparent;
             font-size: 0;
+            transition: transform 0.05s;
+        }
+        .btn.active {
+            transform: scale(0.92);
         }
 
-        /* Posicionamiento del D-pad (portrait) */
-        #btn-up    { grid-column: 2; grid-row: 1; }
-        #btn-left  { grid-column: 1; grid-row: 2; }
-        #btn-right { grid-column: 3; grid-row: 2; }
-        #btn-down  { grid-column: 2; grid-row: 3; }
-
-        /* Imágenes NORMALES */
-        #btn-up    { background-image: url('up.png'); }
-        #btn-down  { background-image: url('dwn.png'); }
+        /* Botones portrait: izquierda / derecha */
         #btn-left  { background-image: url('lft.png'); }
         #btn-right { background-image: url('rgt.png'); }
+        /* Botones portrait: arriba / abajo */
+        #btn-up    { background-image: url('up.png'); }
+        #btn-down  { background-image: url('dwn.png'); }
 
-        /* Imágenes de ACCIÓN (al presionar) */
-        #btn-up.active    { background-image: url('upaction.png') !important; }
-        #btn-down.active  { background-image: url('dwnaction.png') !important; }
+        /* Imágenes de ACCIÓN (mientras se presionan) */
         #btn-left.active  { background-image: url('lftaction.png') !important; }
         #btn-right.active { background-image: url('rgtaction.png') !important; }
+        #btn-up.active    { background-image: url('upaction.png') !important; }
+        #btn-down.active  { background-image: url('dwnaction.png') !important; }
 
-        /* Grupo acción (derecha) */
+        /* Grupo acción (portrait) */
         .action-group {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         #btn-config {
-            width: 50px; height: 50px;
+            width: 44px; height: 44px;
             border-radius: 50%;
             background: #f0c040;
             border: 2px solid #a08020;
             color: #000;
             font-weight: bold;
-            font-size: 1.05em;
+            font-size: 0.95em;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -140,12 +139,12 @@
         }
         #btn-config:active { background: #a08020; transform: scale(0.95); }
 
-        #btn-disp {
-            width: 110px; height: 110px;
-            border-radius: 50%;
+        /* Botón ACCION (disp) */
+        #btn-disp-left, #btn-disp-right {
+            width: 90px; height: 90px;
             background-color: transparent;
             background-image: url('disp.png');
-            background-size: 90%;
+            background-size: 100%;
             background-repeat: no-repeat;
             background-position: center;
             border: none;
@@ -154,10 +153,15 @@
             touch-action: manipulation;
             color: transparent;
             font-size: 0;
+            transition: transform 0.05s;
         }
-        #btn-disp.active {
+        #btn-disp-left.active, #btn-disp-right.active {
             background-image: url('dispction.png') !important;
+            transform: scale(0.92);
         }
+
+        /* En portrait, ocultamos el botón de acción de la derecha (solo mostramos uno) */
+        #btn-disp-right { display: none; }
 
         /* ============================================================
            LANDSCAPE
@@ -214,64 +218,119 @@
             }
 
             /* ============================================
-               D-PAD GRANDE — IZQUIERDA
+               IZQUIERDA: ← → + ACCION debajo
                ============================================ */
             .d-pad {
                 position: fixed !important;
-                left: calc(env(safe-area-inset-left) + 25px) !important;
+                left: calc(env(safe-area-inset-left) + 20px) !important;
                 right: auto !important;
-                top: 50% !important;
-                transform: translateY(-50%) !important;
-                width: min(50vw, 88vh, 400px) !important;
-                height: min(50vw, 88vh, 400px) !important;
-                display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important;
-                grid-template-rows: repeat(3, 1fr) !important;
-                gap: 8px !important;
-                opacity: 0.9;
-                z-index: 60;
-                pointer-events: auto;
-            }
-
-            .d-pad .btn {
-                border-radius: 50%;
-                border-width: 3px;
-                background-size: 70%;
-            }
-
-            #btn-up    { grid-column: 2 !important; grid-row: 1 !important; }
-            #btn-left  { grid-column: 1 !important; grid-row: 2 !important; }
-            #btn-right { grid-column: 3 !important; grid-row: 2 !important; }
-            #btn-down  { grid-column: 2 !important; grid-row: 3 !important; }
-
-            /* ============================================
-               GRUPO ACCIÓN — DERECHA
-               ============================================ */
-            .action-group {
-                position: fixed !important;
-                right: calc(env(safe-area-inset-right) + 30px) !important;
-                left: auto !important;
                 top: 50% !important;
                 transform: translateY(-50%) !important;
                 display: flex !important;
                 flex-direction: column !important;
                 align-items: center !important;
-                gap: 22px !important;
+                gap: 20px !important;
+                width: auto !important;
+                height: auto !important;
                 z-index: 60;
                 pointer-events: auto;
             }
 
-            #btn-config {
-                width: 60px !important;
-                height: 60px !important;
-                font-size: 1.2em !important;
-                opacity: 0.9;
+            /* En landscape, los 4 botones se separan en dos columnas */
+            #btn-left {
+                position: fixed !important;
+                left: calc(env(safe-area-inset-left) + 20px) !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                width: min(20vw, 34vh, 130px) !important;
+                height: min(20vw, 34vh, 130px) !important;
+                z-index: 60;
+                pointer-events: auto;
             }
 
-            #btn-disp {
-                width: min(28vw, 50vh, 190px) !important;
-                height: min(28vw, 50vh, 190px) !important;
+            #btn-right {
+                position: fixed !important;
+                left: calc(env(safe-area-inset-left) + 20px + min(20vw, 34vh, 130px) + 12px) !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                width: min(20vw, 34vh, 130px) !important;
+                height: min(20vw, 34vh, 130px) !important;
+                z-index: 60;
+                pointer-events: auto;
+            }
+
+            #btn-up {
+                position: fixed !important;
+                right: calc(env(safe-area-inset-right) + 20px + min(20vw, 34vh, 130px) + 12px) !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                width: min(20vw, 34vh, 130px) !important;
+                height: min(20vw, 34vh, 130px) !important;
+                z-index: 60;
+                pointer-events: auto;
+            }
+
+            #btn-down {
+                position: fixed !important;
+                right: calc(env(safe-area-inset-right) + 20px) !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                width: min(20vw, 34vh, 130px) !important;
+                height: min(20vw, 34vh, 130px) !important;
+                z-index: 60;
+                pointer-events: auto;
+            }
+
+            /* Ocultar el .d-pad (ya no lo usamos como contenedor en landscape) */
+            .d-pad { visibility: hidden; }
+
+            /* ============================================
+               GRUPO ACCIÓN — repartido en ambos lados
+               ============================================ */
+            .action-group {
+                position: fixed !important;
+                inset: 0 !important;
+                display: block !important;
+                pointer-events: none;
+                z-index: 60;
+            }
+
+            /* Botón CONFIG (arriba centrado) */
+            #btn-config {
+                position: fixed !important;
+                top: calc(env(safe-area-inset-top) + 10px) !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                width: 50px !important;
+                height: 50px !important;
+                font-size: 1.1em !important;
                 opacity: 0.9;
+                pointer-events: auto;
+                z-index: 70;
+            }
+
+            /* Botón ACCION izquierda (debajo de ← →) */
+            #btn-disp-left {
+                position: fixed !important;
+                left: calc(env(safe-area-inset-left) + 20px) !important;
+                bottom: calc(env(safe-area-inset-bottom) + 20px) !important;
+                width: min(18vw, 30vh, 120px) !important;
+                height: min(18vw, 30vh, 120px) !important;
+                pointer-events: auto;
+                z-index: 65;
+                display: block !important;
+            }
+
+            /* Botón ACCION derecha (debajo de ↑ ↓) */
+            #btn-disp-right {
+                position: fixed !important;
+                right: calc(env(safe-area-inset-right) + 20px) !important;
+                bottom: calc(env(safe-area-inset-bottom) + 20px) !important;
+                width: min(18vw, 30vh, 120px) !important;
+                height: min(18vw, 30vh, 120px) !important;
+                pointer-events: auto;
+                z-index: 65;
+                display: block !important;
             }
         }
     </style>
@@ -295,15 +354,16 @@
             <div class="game-controls-row">
 
                 <div class="d-pad">
-                    <div id="btn-up"    class="btn" data-key="6"></div>
                     <div id="btn-left"  class="btn" data-key="7"></div>
                     <div id="btn-right" class="btn" data-key="9"></div>
+                    <div id="btn-up"    class="btn" data-key="6"></div>
                     <div id="btn-down"  class="btn" data-key="8"></div>
                 </div>
 
                 <div class="action-group">
                     <div id="btn-config" data-key="4">4</div>
-                    <div id="btn-disp" class="btn" data-key="Space"></div>
+                    <div id="btn-disp-left"  class="btn" data-key="Space"></div>
+                    <div id="btn-disp-right" class="btn" data-key="Space"></div>
                 </div>
 
             </div>
